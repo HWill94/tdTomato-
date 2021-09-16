@@ -1,0 +1,35 @@
+imshow(HCW49CCISxn3IpsiCA3TAM23DPI21umzstackMIP_RGB);
+
+%extract red channel 
+redChannel = HCW49CCISxn3IpsiCA3TAM23DPI21umzstackMIP_RGB(:,:,1); 
+imshow(redChannel)
+colorbar 
+
+%Variable 
+min_cell_size =2;
+threshold = 125;
+%thresholdDAPI = 25
+%min_cell_size2 = 30000 
+
+%Thresholding and Binary Image 
+Thresh = redChannel > threshold; 
+imagesc(Thresh)
+Im_size = bwareafilt(Thresh, [min_cell_size inf]); 
+imshow(Im_size); 
+
+%Area and Centroid 
+Blob_data = regionprops(Im_size, {'Area','Centroid'}); 
+areas_CA3 = cat(1, Blob_data.Area); 
+centroid_CA3 = cat(1, Blob_data.Centroid);
+
+imshow(Im_size) 
+hold on 
+for i = 1: numel (Blob_data) 
+      plot(centroid_CA3(i,1), centroid_CA3(i,2), 'M+')
+end
+title ('tdTomato+ CA3 Binary Image', 'FontSize', 10); 
+hold off 
+
+statsDCX = regionprops('table', Im_size, 'basic') 
+
+hold on 
